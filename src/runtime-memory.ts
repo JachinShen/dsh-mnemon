@@ -175,6 +175,8 @@ export class RuntimeMemoryController {
   readonly lockPath: string
 
   private queue: Promise<unknown> = Promise.resolve()
+  private readonly deliveredRevisions = new WeakMap<object, string>()
+  private deliveredGlobalRevision: string | undefined
 
   constructor(
     runner: Pick<MnemonRunner, 'effectiveDataDir'>,
@@ -204,7 +206,7 @@ export class RuntimeMemoryController {
     }
   }
 
-  contextText(): string {
+  contextText(scope?: object): string {
     const { snapshot, user, memory } = this.withLock(() => {
       const file = this.readSource()
       this.repairProjections(file)
@@ -225,10 +227,17 @@ export class RuntimeMemoryController {
         memory: readFileSync(this.memoryPath, 'utf8').trimEnd(),
       }
     })
+    const previousRevision = scope === undefined
+      ? this.deliveredGlobalRevision
+      : this.deliveredRevisions.get(scope)
+    if (previousRevision === snapshot.revision) return ''
+    if (scope === undefined) this.deliveredGlobalRevision = snapshot.revision
+    else this.deliveredRevisions.set(scope, snapshot.revision)
+
     const userUsage = snapshot.targets.user
     const memoryUsage = snapshot.targets.memory
     return `MNEMON RUNTIME MEMORY PROTOCOL
-You are operating with compact hot memory. The system has loaded USER.md and MEMORY.md below for every turn. They are always relevant when their subject matches the current task; comply implicitly and do not recite this protocol or the files merely to prove that you read them.
+You are operating with compact hot memory. The system loads the current USER.md and MEMORY.md at session start and again only when either file changes. They are relevant when their subject matches the current task; comply implicitly and do not recite this protocol or the files merely to prove that you read them.
 
 SEMANTICS AND PRIORITY
 - The user's explicit request in the current turn wins over both files.

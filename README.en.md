@@ -24,21 +24,21 @@ The plugin brings Mnemon's durable Memory Space capabilities into DSH and adds R
 
 | Tier | What belongs here | How it is retained | How it reaches context |
 |---|---|---|---|
-| Runtime Memory | User preferences, stable conventions, environment facts, frequently used lessons | Explicit operations or an eligible background review update `memories.json`, then generate `USER.md` / `MEMORY.md` projections | Injected directly every turn |
+| Runtime Memory | User preferences, stable conventions, environment facts, frequently used lessons | Explicit operations or an eligible background review update `memories.json`, then generate `USER.md` / `MEMORY.md` projections | Injected at session start or after a revision change |
 | Project Documents | Designs, investigations, procedures, rationale, and handoffs | Create or update managed Markdown and `index.json`; capacity maintenance creates a Mnemon cold reference before moving the original | Search active Documents first, then read full text on demand |
 | Memory Spaces | Cross-session facts, decisions, entities, and relationships | A bounded `spawn` worker selects the narrowest space, checks duplicates, and writes four-graph memory through Mnemon `remember` / `link` | Recalled on demand from active Memory Spaces only |
 
 ```text
 Reusable knowledge produced by current work
           |
-          +-- Compact, stable, useful every turn
+          +-- Compact, stable, useful across sessions
           |      root Agent / eligible fork review
           |                 |
           |      add | replace | remove
           |                 v
           |      memories.json (source of truth)
           |                 |
-          |      USER.md + MEMORY.md ----------> every prompt
+          |      USER.md + MEMORY.md ----------> session/revision prompt
           |
           +-- Complete designs, research, procedures, handoffs
           |      root Agent / eligible fork review

@@ -85,9 +85,11 @@ export declare class RuntimeMemoryController {
     readonly userPath: string;
     readonly lockPath: string;
     private queue;
+    private readonly deliveredRevisions;
+    private deliveredGlobalRevision;
     constructor(runner: Pick<MnemonRunner, 'effectiveDataDir'>, now?: () => Date);
     snapshot(): RuntimeMemorySnapshot;
-    contextText(): string;
+    contextText(scope?: object): string;
     mutate(request: RuntimeMemoryMutation): Promise<RuntimeMemoryMutationResult>;
     /** Apply an LLM-produced compaction only to the exact snapshot it reviewed. */
     compactTarget(expectedRevision: string, target: RuntimeMemoryTarget, compacted: RuntimeMemoryCompactedEntry[], maxBytes?: number): Promise<RuntimeMemorySnapshot>;

@@ -62,14 +62,14 @@ DSH 提供主 Agent 与扩展入口，`dsh-mnemon` 负责三层控制、路由�
 
 ## 三层记忆模型
 
-### 1. Runtime Memory：每轮可见的热记忆
+### 1. Runtime Memory：会话与版本变化可见的热记忆
 
 Runtime Memory 保存高频且紧凑的稳定信息：
 
 - `target=user`：身份、角色、长期偏好、习惯、沟通风格和明确协作要求；
 - `target=memory`：项目约定、环境事实、决策、工具特性和可复用经验。
 
-`runtime/memories.json` 是唯一事实源，`USER.md` 和 `MEMORY.md` 是每轮注入 prompt 的确定性投影。USER 上限为 4 KiB，MEMORY 上限为 10 KiB，单条内容最大 8 KiB，均按 UTF-8 字节计算。
+`runtime/memories.json` 是唯一事实源，`USER.md` 和 `MEMORY.md` 是按会话 scope 缓存、在会话开始和已提交版本变化后注入的确定性投影。USER 上限为 4 KiB，MEMORY 上限为 10 KiB，单条内容最大 8 KiB，均按 UTF-8 字节计算。
 
 普通 `add`、`replace` 和 `remove` 由确定性控制层完成。只有 `add` 造成容量溢出时才触发维护：USER 在本地由无工具 worker 保守合并；MEMORY 先由受限 worker 归档长期语义，再压缩热层候选。导致溢出的 `replace` 会直接拒绝，不会自动整理。
 

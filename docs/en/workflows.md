@@ -7,7 +7,7 @@
 The plugin registers two system prompt sections:
 
 - `mnemon:routing`: when `routingGuidance=true`, provides concise boundaries for tiered queries;
-- `mnemon:runtime-memory`: reads the latest `USER.md` and `MEMORY.md` whenever a prompt is assembled and includes admission rules for saving content.
+- `mnemon:runtime-memory`: caches the delivered Runtime Memory revision per session scope; it reads the latest `USER.md` and `MEMORY.md` on the first assembly and once after a revision change, then contributes empty text until another revision.
 
 Lifecycle hooks do not unconditionally read the Memory Space catalog or run recall at the start of every turn:
 
@@ -22,7 +22,7 @@ agent/pre-step(step=1)
   -> main Agent decides whether to call a memory tool
 ```
 
-Prime only initializes routing state; it does not run asynchronous CLI status queries.
+Prime only initializes routing state; it does not run asynchronous CLI status queries. The lifecycle cue is also appended only on the first ordinary `pre-step(step=1)` of each session and is not repeated on later turns unless the session restarts.
 
 ## Root Agent Recall
 

@@ -88,7 +88,7 @@ function fixture(config = resolveConfig({ cliPath: '/fake/mnemon' })) {
 afterEach(() => vi.useRealTimers())
 
 describe('Mnemon DSH lifecycle integration', () => {
-  it('adds a short optional reminder without forcing recall or remember for an ordinary turn', async () => {
+  it('adds the optional reminder once per session without forcing recall or remember', async () => {
     const value = fixture()
     const prompt = userMessage('Aster 发布前需要检查哪些事项？')
     const decision = await value.preStep([prompt], 1)
@@ -103,9 +103,9 @@ describe('Mnemon DSH lifecycle integration', () => {
 
     const second = await value.preStep([userMessage('Second turn')], 2)
     if (second.kind !== 'enter') throw new Error('unexpected rejection')
-    expect(second.messages).toHaveLength(2)
+    expect(second.messages).toHaveLength(1)
     expect(value.coordinator.recall).not.toHaveBeenCalled()
-    expect(value.lifecycle.snapshot('session-1').counters).toMatchObject({ primes: 1, recallCues: 2, writebackCues: 2 })
+    expect(value.lifecycle.snapshot('session-1').counters).toMatchObject({ primes: 1, recallCues: 1, writebackCues: 1 })
   })
 
   it('waits for the QoderWork score threshold, then debounces a full-checkpoint review', async () => {

@@ -220,12 +220,11 @@ class MnemonAgentLifecycle {
       return decision
     }
     if (decision.messages.length === 0) return decision
+    if (!this.primePending) return decision
 
-    if (this.primePending) {
-      this.primePending = false
-      this.counters.primes += 1
-      this.mark('prime')
-    }
+    this.primePending = false
+    this.counters.primes += 1
+    this.mark('prime')
     const reminder = guidedReminder(this.config)
     if (reminder === undefined) return decision
     this.guidedTurns.add(payload.turn)

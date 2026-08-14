@@ -7,7 +7,7 @@
 插件注册两个 system prompt section：
 
 - `mnemon:routing`：当 `routingGuidance=true` 时提供简短的分层查询边界；
-- `mnemon:runtime-memory`：每次组装 prompt 时读取最新 `USER.md` 和 `MEMORY.md`，并附带保存准入规则。
+- `mnemon:runtime-memory`：按会话 scope 缓存已交付的 Runtime Memory 版本；会话第一次组装 prompt，或版本变化后的下一次组装，读取最新 `USER.md` 和 `MEMORY.md`，并附带保存准入规则。版本未变化时贡献空文本。
 
 生命周期 hook 不会在每轮开始无条件读取记忆体目录或执行 recall：
 
@@ -22,7 +22,7 @@ agent/pre-step(step=1)
   -> main Agent decides whether to call a memory tool
 ```
 
-Prime 只初始化路由状态，不执行异步 CLI 状态查询。
+Prime 只初始化路由状态，不执行异步 CLI 状态查询。生命周期提醒同样只在每个会话第一次普通 `pre-step(step=1)` 注入；后续轮次不重复追加，除非会话重新开始。
 
 ## 主 Agent 召回
 

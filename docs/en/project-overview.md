@@ -4,7 +4,7 @@
 
 > **`dsh-mnemon` deeply integrates [Mnemon](https://github.com/mnemon-dev/mnemon) with DSH, giving DSH comprehensive memory capabilities.**
 
-It separates what must be visible every turn, project knowledge that should remain readable as a whole, and long-term history recalled across sessions into three clear tiers. DSH then supplies routing, lifecycle integration, bounded subagents, and the user interface.
+It separates compact runtime memory delivered at session start or after a revision change, project knowledge that should remain readable as a whole, and long-term history recalled across sessions into three clear tiers. DSH then supplies routing, lifecycle integration, bounded subagents, and the user interface.
 
 The central goal is to give an Agent long-term continuity while keeping the current task authoritative, context compact, writes auditable, and original data protected when maintenance fails.
 
@@ -18,7 +18,7 @@ With only the current conversation, an Agent cannot reliably carry forward user 
 
 | Need | Limit of one memory tier | dsh-mnemon approach |
 |---|---|---|
-| Make stable preferences and conventions available next turn | Retrieval adds latency and can miss | Runtime Memory injects compact projections every turn |
+| Make stable preferences and conventions available at session start and after changes | Retrieval adds latency and can miss | Runtime Memory injects compact projections once per session scope and after revision changes |
 | Read a complete design, investigation, or procedure quickly | Fragmentation destroys narrative structure | Documents preserve searchable Markdown originals |
 | Find cross-session facts, decisions, and relationships | Loading everything pollutes current context | Memory Spaces recall graph-enhanced evidence on demand |
 | Keep infrequently used long-form material traceable | Keeping it hot consumes capacity forever | Create a durable cold reference before moving the original |
@@ -69,7 +69,7 @@ Runtime Memory contains compact, frequently used stable information:
 - `target=user`: identity, role, long-term preferences, habits, communication style, and explicit collaboration requirements;
 - `target=memory`: project conventions, environment facts, decisions, tool behavior, and reusable lessons.
 
-`runtime/memories.json` is the only source of truth. `USER.md` and `MEMORY.md` are deterministic projections injected into every prompt. USER is limited to 4 KiB, MEMORY to 10 KiB, and a single entry to 8 KiB, all measured as UTF-8 bytes.
+`runtime/memories.json` is the only source of truth. `USER.md` and `MEMORY.md` are deterministic projections delivered once per session scope and again after a committed revision change. USER is limited to 4 KiB, MEMORY to 10 KiB, and a single entry to 8 KiB, all measured as UTF-8 bytes.
 
 Ordinary `add`, `replace`, and `remove` operations are handled by the deterministic control layer. Maintenance starts only when an `add` overflows: USER is conservatively compacted by a no-tool local worker, while MEMORY is semantically archived by a bounded worker before hot candidates are compacted. An overflowing `replace` is rejected and does not trigger automatic maintenance.
 

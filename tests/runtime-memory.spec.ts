@@ -135,21 +135,25 @@ describe('RuntimeMemoryController', () => {
     expect(context).toContain('<runtime-memory-file name="USER.md">\nUser prefers concise Chinese replies\n</runtime-memory-file>')
     expect(context).toContain('Contents of MEMORY.md (working reference; 0/10240 UTF-8 bytes)')
     expect(context).toContain('<runtime-memory-file name="MEMORY.md">\n(empty)\n</runtime-memory-file>')
-    expect(context.match(/always relevant/gi)).toHaveLength(2)
+    expect(context).toContain('The system loads the current USER.md and MEMORY.md at session start and again only when either file changes')
     expect(context).not.toContain(controller.sourcePath)
   })
 
-  it('assembles every prompt from the latest generated USER.md and MEMORY.md projections', async () => {
+  it('delivers runtime context once per scope and again after a committed revision', async () => {
     const { controller } = fixture()
-    const empty = controller.contextText()
-    expect(empty).not.toContain('User prefers compact release notes')
+    const scope = {}
+    const first = controller.contextText(scope)
+    expect(first).toContain('MNEMON RUNTIME MEMORY PROTOCOL')
+    expect(controller.contextText(scope)).toBe('')
 
     await controller.mutate({ action: 'add', target: 'user', content: 'User prefers compact release notes', importance: 'critical' })
     await controller.mutate({ action: 'add', target: 'memory', content: 'Release checks run with pnpm verify' })
-    const populated = controller.contextText()
+    const populated = controller.contextText(scope)
 
     expect(populated).toContain('User prefers compact release notes')
     expect(populated).toContain('Release checks run with pnpm verify')
+    expect(controller.contextText(scope)).toBe('')
+    expect(controller.contextText({})).toContain('User prefers compact release notes')
     expect(readFileSync(controller.userPath, 'utf8')).toBe('User prefers compact release notes\n')
     expect(readFileSync(controller.memoryPath, 'utf8')).toBe('Release checks run with pnpm verify\n')
   })
