@@ -108,6 +108,19 @@ describe('Mnemon DSH lifecycle integration', () => {
     expect(value.lifecycle.snapshot('session-1').counters).toMatchObject({ primes: 1, recallCues: 1, writebackCues: 1 })
   })
 
+  it('supports every-turn and disabled lifecycle cue modes', async () => {
+    const everyTurn = fixture(resolveConfig({ lifecycleCueMode: 'every-turn' }))
+    expect((await everyTurn.preStep([userMessage('first')], 1)).kind).toBe('enter')
+    const second = await everyTurn.preStep([userMessage('second')], 2)
+    expect(second).toMatchObject({ kind: 'enter' })
+    if (second.kind !== 'enter') throw new Error('unexpected rejection')
+    expect(second.messages).toHaveLength(2)
+
+    const off = fixture(resolveConfig({ lifecycleCueMode: 'off' }))
+    const decision = await off.preStep([userMessage('silent')], 1)
+    expect(decision).toMatchObject({ kind: 'enter', messages: [expect.any(Object)] })
+  })
+
   it('waits for the QoderWork score threshold, then debounces a full-checkpoint review', async () => {
     vi.useFakeTimers()
     const value = fixture(resolveConfig({ idleReviewMs: 5_000 }))

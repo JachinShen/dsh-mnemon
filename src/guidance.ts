@@ -1,4 +1,5 @@
 import type { HostContextShape } from './contracts.ts'
+import type { ResolvedConfig } from './config.ts'
 import type { RuntimeMemoryController } from './runtime-memory.ts'
 
 type PromptAssemblyContext = { scope?: object }
@@ -19,11 +20,12 @@ export function registerGuidance(ctx: HostContextShape): void {
   systemPrompt(ctx)?.section?.({ name: GUIDANCE_SECTION_NAME, order: 150, text: ROUTING_GUIDANCE })
 }
 
-/** Inject the latest committed USER.md/MEMORY.md once per session scope and after revisions. */
-export function registerRuntimeMemoryContext(ctx: HostContextShape, runtimeMemory: RuntimeMemoryController): void {
+/** Inject Runtime Memory according to the configured delivery cadence. */
+export function registerRuntimeMemoryContext(ctx: HostContextShape, runtimeMemory: RuntimeMemoryController, mode: ResolvedConfig['runtimeMemoryMode']): void {
+  if (mode === 'off') return
   systemPrompt(ctx)?.section?.({
     name: RUNTIME_MEMORY_SECTION_NAME,
     order: 145,
-    text: context => runtimeMemory.contextText(context.scope),
+    text: context => runtimeMemory.contextText(context.scope, mode === 'every-turn'),
   })
 }

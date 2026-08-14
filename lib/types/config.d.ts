@@ -22,8 +22,12 @@ export interface Config {
     writeEnabled?: boolean;
     /** Enable DSH agent lifecycle integration (Prime plus recall/remember cues). */
     lifecycleEnabled?: boolean;
+    /** Runtime USER.md/MEMORY.md delivery cadence. */
+    runtimeMemoryMode?: 'session-revision' | 'every-turn' | 'off';
     /** Recall behavior at the first step of each DSH turn. */
     recallMode?: 'guided' | 'off';
+    /** Lifecycle cue delivery cadence. */
+    lifecycleCueMode?: 'session' | 'every-turn' | 'off';
     /** Enable the short remember cue and the scored, debounced full-checkpoint review. */
     writebackMode?: 'guided' | 'off';
     /** Continuous root-agent idle time after the QoderWork activity gate is met. */
@@ -41,7 +45,9 @@ export interface ResolvedConfig {
     tabEnabled: boolean;
     writeEnabled: boolean;
     lifecycleEnabled: boolean;
+    runtimeMemoryMode: 'session-revision' | 'every-turn' | 'off';
     recallMode: 'guided' | 'off';
+    lifecycleCueMode: 'session' | 'every-turn' | 'off';
     writebackMode: 'guided' | 'off';
     idleReviewMs: number;
 }

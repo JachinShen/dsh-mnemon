@@ -35,6 +35,7 @@ export interface LifecycleAgentSnapshot {
 export interface LifecycleSnapshot {
     enabled: boolean;
     recallMode: ResolvedConfig['recallMode'];
+    lifecycleCueMode: ResolvedConfig['lifecycleCueMode'];
     writebackMode: ResolvedConfig['writebackMode'];
     idleReviewMs: number;
     activeAgents: number;

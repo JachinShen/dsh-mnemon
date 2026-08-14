@@ -283,8 +283,10 @@ conservative maintenance decision
 
 ## How Configuration Switches Interact
 
-- `recallMode=off`: stops injecting recall cues; explicit `mnemon_recall` remains available.
+- `runtimeMemoryMode=session-revision`: delivers Runtime Memory at session start and after a revision change; `every-turn` delivers it every turn; `off` does not register the Runtime Memory section.
+- `recallMode=off`: stops generating recall cues; explicit `mnemon_recall` remains available.
+- `lifecycleCueMode=session`: one cue per session; `every-turn` emits one per turn; `off` emits no memory reminder.
 - `writebackMode=off`: disables writeback cues and scored background review; explicit writes are still governed by `writeEnabled`.
 - `lifecycleEnabled=false`: disables lifecycle reminders and review without removing explicit tools or Web entry points.
-- `routingGuidance=false`: removes only the additional routing section; the Runtime Memory section remains registered.
+- `routingGuidance=false`: removes only the additional routing section; Runtime Memory registration is controlled by `runtimeMemoryMode`.
 - `writeEnabled=false`: removes semantic write tools and write RPC, and rejects write commands; it does not guarantee a read-only file-system mount.

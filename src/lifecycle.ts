@@ -46,6 +46,7 @@ export interface LifecycleAgentSnapshot {
 export interface LifecycleSnapshot {
   enabled: boolean
   recallMode: ResolvedConfig['recallMode']
+  lifecycleCueMode: ResolvedConfig['lifecycleCueMode']
   writebackMode: ResolvedConfig['writebackMode']
   idleReviewMs: number
   activeAgents: number
@@ -122,6 +123,7 @@ function completedToolActivity(events: readonly HostSessionEvent[], turn: number
 }
 
 function guidedReminder(config: ResolvedConfig): string | undefined {
+  if (config.lifecycleCueMode === 'off') return undefined
   if (config.recallMode === 'guided' && config.writebackMode === 'guided') return '[MNEMON] Search active Documents for substantial project knowledge before deep recall; call mnemon_recall only when durable history or an exact prior detail matters, and use mnemon_runtime_memory only for new explicit reusable facts. Otherwise call none.'
   if (config.recallMode === 'guided') return '[MNEMON] Search active Documents for substantial project knowledge before deep recall; call mnemon_recall only when durable history or an exact prior detail matters. Otherwise call neither.'
   if (config.writebackMode === 'guided') return '[MNEMON] Use mnemon_runtime_memory only for new, explicit, reusable information; otherwise continue without writing memory.'
@@ -220,11 +222,13 @@ class MnemonAgentLifecycle {
       return decision
     }
     if (decision.messages.length === 0) return decision
-    if (!this.primePending) return decision
+    if (this.config.lifecycleCueMode === 'session' && !this.primePending) return decision
 
-    this.primePending = false
-    this.counters.primes += 1
-    this.mark('prime')
+    if (this.primePending) {
+      this.primePending = false
+      this.counters.primes += 1
+      this.mark('prime')
+    }
     const reminder = guidedReminder(this.config)
     if (reminder === undefined) return decision
     this.guidedTurns.add(payload.turn)
@@ -359,6 +363,7 @@ export class MnemonLifecycle {
     return {
       enabled: this.config.lifecycleEnabled,
       recallMode: this.config.recallMode,
+      lifecycleCueMode: this.config.lifecycleCueMode,
       writebackMode: this.config.writebackMode,
       idleReviewMs: this.config.idleReviewMs,
       activeAgents: this.owners.size,

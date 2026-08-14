@@ -26,7 +26,9 @@ mnemon:
   defaultRecallLimit: 10
   routingGuidance: true
   lifecycleEnabled: true
+  runtimeMemoryMode: session-revision # session-revision | every-turn | off
   recallMode: guided
+  lifecycleCueMode: session # session | every-turn | off
   writebackMode: guided
   idleReviewMs: 30000
   tabEnabled: true
@@ -45,7 +47,9 @@ mnemon:
 | `defaultRecallLimit` | `10` | 1–50 | Default recall count for the service and UI; individual entry points may impose a lower limit |
 | `routingGuidance` | `true` | boolean | Whether to register an additional tiered-routing system section |
 | `lifecycleEnabled` | `true` | boolean | Whether to enable the pre-step cue and score-based background review |
-| `recallMode` | `guided` | `guided` / `off` | Whether to inject an on-demand recall cue; does not remove explicit recall |
+| `runtimeMemoryMode` | `session-revision` | `session-revision` / `every-turn` / `off` | Whether USER.md/MEMORY.md load at session start and revision changes, every turn, or never |
+| `recallMode` | `guided` | `guided` / `off` | Whether to enable the recall cue; does not remove explicit recall |
+| `lifecycleCueMode` | `session` | `session` / `every-turn` / `off` | Whether the memory reminder appears once per session, every turn, or never |
 | `writebackMode` | `guided` | `guided` / `off` | Whether to inject the hot-memory cue and enable score-based background review; does not remove explicit writes |
 | `idleReviewMs` | `30000` | 5000–600000 ms | Required continuous idle time after the threshold is reached |
 | `tabEnabled` | `true` | boolean | Currently gates only Host Mnemon data RPC; the client Tab is still registered—see the limitation below |

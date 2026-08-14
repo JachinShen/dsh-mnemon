@@ -38,7 +38,7 @@ export function apply(rawContext: unknown, config: MnemonConfig = {}): void {
   registerTools(ctx, service, coordinator, runtimeMemory, documents)
   registerCommands(ctx.commands, service, coordinator)
   if (resolved.routingGuidance) registerGuidance(ctx)
-  registerRuntimeMemoryContext(ctx, runtimeMemory)
+  registerRuntimeMemoryContext(ctx, runtimeMemory, resolved.runtimeMemoryMode)
   ctx.inject(['connection'], (webContext) => {
     if (resolved.tabEnabled) registerRpc(webContext.connection, service, lifecycle, runtimeMemory, storage)
     registerSettingsRpc(webContext.connection, ctx.settings)

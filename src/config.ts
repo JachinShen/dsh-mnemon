@@ -26,8 +26,12 @@ export interface Config {
   writeEnabled?: boolean
   /** Enable DSH agent lifecycle integration (Prime plus recall/remember cues). */
   lifecycleEnabled?: boolean
+  /** Runtime USER.md/MEMORY.md delivery cadence. */
+  runtimeMemoryMode?: 'session-revision' | 'every-turn' | 'off'
   /** Recall behavior at the first step of each DSH turn. */
   recallMode?: 'guided' | 'off'
+  /** Lifecycle cue delivery cadence. */
+  lifecycleCueMode?: 'session' | 'every-turn' | 'off'
   /** Enable the short remember cue and the scored, debounced full-checkpoint review. */
   writebackMode?: 'guided' | 'off'
   /** Continuous root-agent idle time after the QoderWork activity gate is met. */
@@ -47,7 +51,9 @@ export const Config: z<Config> = z.object({
   tabEnabled: z.boolean().default(true),
   writeEnabled: z.boolean().default(true),
   lifecycleEnabled: z.boolean().default(true),
+  runtimeMemoryMode: z.union(['session-revision', 'every-turn', 'off'] as const).default('session-revision'),
   recallMode: z.union(['guided', 'off'] as const).default('guided'),
+  lifecycleCueMode: z.union(['session', 'every-turn', 'off'] as const).default('session'),
   writebackMode: z.union(['guided', 'off'] as const).default('guided'),
   idleReviewMs: z.number().step(1).min(5_000).max(600_000).default(DEFAULT_IDLE_REVIEW_MS),
 })
@@ -63,7 +69,9 @@ export interface ResolvedConfig {
   tabEnabled: boolean
   writeEnabled: boolean
   lifecycleEnabled: boolean
+  runtimeMemoryMode: 'session-revision' | 'every-turn' | 'off'
   recallMode: 'guided' | 'off'
+  lifecycleCueMode: 'session' | 'every-turn' | 'off'
   writebackMode: 'guided' | 'off'
   idleReviewMs: number
 }
@@ -96,7 +104,9 @@ export function resolveConfig(config: Config = {}): ResolvedConfig {
     tabEnabled: config.tabEnabled ?? true,
     writeEnabled: config.writeEnabled ?? true,
     lifecycleEnabled: config.lifecycleEnabled ?? true,
+    runtimeMemoryMode: config.runtimeMemoryMode ?? 'session-revision',
     recallMode: config.recallMode ?? 'guided',
+    lifecycleCueMode: config.lifecycleCueMode ?? 'session',
     writebackMode: config.writebackMode ?? 'guided',
     idleReviewMs: config.idleReviewMs ?? DEFAULT_IDLE_REVIEW_MS,
   }

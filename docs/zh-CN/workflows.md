@@ -283,8 +283,10 @@ conservative maintenance decision
 
 ## 配置开关的关系
 
-- `recallMode=off`：不再注入 recall cue，显式 `mnemon_recall` 仍可用。
+- `runtimeMemoryMode=session-revision`：会话开始和 Runtime Memory 版本变化后注入一次；`every-turn` 每轮注入；`off` 不注册 Runtime Memory section。
+- `recallMode=off`：不再生成 recall cue，显式 `mnemon_recall` 仍可用。
+- `lifecycleCueMode=session`：每会话一次；`every-turn` 每轮一次；`off` 不生成记忆治理提醒。
 - `writebackMode=off`：关闭写回 cue 和评分后台审查，显式写入仍由 `writeEnabled` 决定。
 - `lifecycleEnabled=false`：关闭生命周期提醒和审查，不移除显式工具或 Web 入口。
-- `routingGuidance=false`：只移除额外路由 section；Runtime Memory section 仍注册。
+- `routingGuidance=false`：只移除额外路由 section；Runtime Memory 是否注册由 `runtimeMemoryMode` 决定。
 - `writeEnabled=false`：移除语义写工具和写 RPC，拒绝写命令；它不是文件系统只读挂载保证。

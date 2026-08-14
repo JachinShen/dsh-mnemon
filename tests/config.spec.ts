@@ -13,11 +13,20 @@ describe('Mnemon config and resolution', () => {
       defaultRecallLimit: 10,
       routingGuidance: true,
       lifecycleEnabled: true,
+       runtimeMemoryMode: 'session-revision',
       recallMode: 'guided',
+       lifecycleCueMode: 'session',
       writebackMode: 'guided',
       idleReviewMs: 30_000,
       tabEnabled: true,
       writeEnabled: true,
+    })
+  })
+
+  it('supports configurable memory and lifecycle delivery cadences', () => {
+    expect(resolveConfig({ runtimeMemoryMode: 'every-turn', lifecycleCueMode: 'off' })).toMatchObject({
+      runtimeMemoryMode: 'every-turn',
+      lifecycleCueMode: 'off',
     })
   })
 

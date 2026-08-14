@@ -206,7 +206,7 @@ export class RuntimeMemoryController {
     }
   }
 
-  contextText(scope?: object): string {
+  contextText(scope?: object, force = false): string {
     const { snapshot, user, memory } = this.withLock(() => {
       const file = this.readSource()
       this.repairProjections(file)
@@ -230,7 +230,7 @@ export class RuntimeMemoryController {
     const previousRevision = scope === undefined
       ? this.deliveredGlobalRevision
       : this.deliveredRevisions.get(scope)
-    if (previousRevision === snapshot.revision) return ''
+    if (!force && previousRevision === snapshot.revision) return ''
     if (scope === undefined) this.deliveredGlobalRevision = snapshot.revision
     else this.deliveredRevisions.set(scope, snapshot.revision)
 

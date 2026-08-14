@@ -26,7 +26,9 @@ mnemon:
   defaultRecallLimit: 10
   routingGuidance: true
   lifecycleEnabled: true
+  runtimeMemoryMode: session-revision # session-revision | every-turn | off
   recallMode: guided
+  lifecycleCueMode: session # session | every-turn | off
   writebackMode: guided
   idleReviewMs: 30000
   tabEnabled: true
@@ -45,7 +47,9 @@ mnemon:
 | `defaultRecallLimit` | `10` | 1–50 | 服务和 UI 默认召回条数；不同入口可能再收紧 |
 | `routingGuidance` | `true` | boolean | 是否注册额外的分层路由 system section |
 | `lifecycleEnabled` | `true` | boolean | 是否启用 pre-step cue 和评分后台审查 |
-| `recallMode` | `guided` | `guided` / `off` | 是否注入按需 recall cue；不移除显式召回 |
+| `runtimeMemoryMode` | `session-revision` | `session-revision` / `every-turn` / `off` | USER.md/MEMORY.md 在会话开始和版本变化后注入、每轮注入或不注入 |
+| `recallMode` | `guided` | `guided` / `off` | 是否启用 recall cue；不移除显式召回 |
+| `lifecycleCueMode` | `session` | `session` / `every-turn` / `off` | 记忆治理提醒每会话一次、每轮一次或关闭 |
 | `writebackMode` | `guided` | `guided` / `off` | 是否注入热记忆 cue 并启用评分后台审查；不移除显式写入 |
 | `idleReviewMs` | `30000` | 5000–600000 ms | 达标后需要连续空闲的时间 |
 | `tabEnabled` | `true` | boolean | 当前只门控 Host Mnemon 数据 RPC；客户端 Tab 仍会注册，见下方限制 |
